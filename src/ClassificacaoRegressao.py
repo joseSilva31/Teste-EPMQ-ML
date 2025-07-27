@@ -52,13 +52,13 @@ print("\n-----------------------------------------------")
 
 # Criar pipeline
 clf_pipeline = Pipeline(steps=[
-    ('preprocessor', preprocessor),
-    ('classifier', LogisticRegression(max_iter=1000))
+    ('preprocessor', preprocessor),  # Aplica o pré-processamento anterior definido
+    ('classifier', LogisticRegression(max_iter=1000)) # Aplica o modelo de classificação
 ])
 
 # Treinar e fazer previsões com o Logistic Regression
-clf_pipeline.fit(X_train, y_train_class)
-y_pred_log = clf_pipeline.predict(X_test)
+clf_pipeline.fit(X_train, y_train_class) # Treina o modelo com os dados de treino
+y_pred_log = clf_pipeline.predict(X_test) # Faz as respetivas previsões com os dados de teste
 
 # Avaliar com matriz de confusão
 cm_log = confusion_matrix(y_test_class, y_pred_log, labels=["good", "bad"])
@@ -223,18 +223,18 @@ print("Importância de cada atributo através do feature importances")
 print("-------------------------------------------------------------")
 
 # Para o Random Forest Classifier
-rf_model = rf_pipeline.named_steps['classifier']
-rf_preproc = rf_pipeline.named_steps['preprocessor']
+rf_model = rf_pipeline.named_steps['classifier']  # Extrair o modelo treinado do pipeline
+rf_preproc = rf_pipeline.named_steps['preprocessor'] # Extrair o pré-processador do pipeline
 
 # Obter nomes das features após o OneHotEncoding
 ohe = rf_preproc.named_transformers_['cat']
-encoded_cat_cols = ohe.get_feature_names_out(cat_cols)
-all_feature_names = list(num_cols) + list(encoded_cat_cols)
+encoded_cat_cols = ohe.get_feature_names_out(cat_cols) # Vai buscar os nomes das colunas categóricas codificadas
+all_feature_names = list(num_cols) + list(encoded_cat_cols) # Combina as colunas numéricas e as categóricas
 
 # Importância das features no Random Forest
-fi_rf = rf_model.feature_importances_
-fi_rf_df = pd.DataFrame({'feature': all_feature_names, 'importance': fi_rf})
-fi_rf_df = fi_rf_df.sort_values('importance', ascending=False).head(20)
+fi_rf = rf_model.feature_importances_ # Vai buscar as importâncias das features
+fi_rf_df = pd.DataFrame({'feature': all_feature_names, 'importance': fi_rf}) # Cria um DataFrame com as features e as respetivas importâncias
+fi_rf_df = fi_rf_df.sort_values('importance', ascending=False).head(20) # Ordena e seleciona as 20 mais importantes
 
 plt.figure(figsize=(8,6))
 sns.barplot(x='importance', y='feature', data=fi_rf_df)
@@ -261,6 +261,8 @@ plt.title('Feature Importances - GradientBoostingRegressor')
 plt.tight_layout()
 plt.savefig("resultados/feature_importances_gb.png", dpi=300, bbox_inches="tight")
 plt.close()
+
+print("Resultados exportados para a pasta resultados")
 
 
 
