@@ -214,6 +214,22 @@ print(" Lucro Random Forest Regressor:", calcular_lucro_reg(y_test_reg, y_pred_r
 print(" Lucro Gradient Boosting Regressor:", calcular_lucro_reg(y_test_reg, y_pred_gb_reg))
 print(" Lucro XGBoost:", calcular_lucro_reg(y_test_reg, y_pred_xgb))
 
+# DataSet com os resultados da Regressão
+df_resultados_regression = pd.DataFrame({
+    "Real": y_test_reg,
+    "Regressão Linear": y_pred_lin,
+    "Random Forest": y_pred_rf_reg,
+    "Gradient Boosting": y_pred_gb_reg,
+    "XGBoost": y_pred_xgb,
+    "Erro Percentual Reg. Linear": abs(y_test_reg - y_pred_lin) / y_test_reg,
+    "Erro Percentual RF": abs(y_test_reg - y_pred_rf_reg) / y_test_reg,
+    "Erro Percentual GB": abs(y_test_reg - y_pred_gb_reg) / y_test_reg,
+    "Erro Percentual XGB": abs(y_test_reg - y_pred_xgb) / y_test_reg
+})
+
+# Exportar para CSV
+df_resultados_regression.to_csv("data/ResultadosRegressao.csv", index=False)
+
 # --------------------------------------------------------------------
 # Importância de cada atributo para os modelos com melhores resultados
 # --------------------------------------------------------------------
