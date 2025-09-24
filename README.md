@@ -27,9 +27,10 @@ More information is available at UCI Machine Learning Repository. The goal is to
 
 To evaluate the results of the risk prediction and build the report, consider the following profit and cost matrix:
 
-actual / predicted	1	2
-1	0	-200
-2	-200	100
+actual / predicted	
+1	     |   2
+1	0	   | -200
+2	-200 |	100
 To evaluate the results of the amount of credit requested prediction, consider the folling profit function:
 
 f = 100 * ( |Y - P| / Y < 0.3 )
