@@ -1,0 +1,7 @@
+Tipo,Modelo,Accuracy,Precision_good,Recall_good,F1_good,Lucro,MAE,RMSE
+Classificação,Logistic Regression,0.74,0.79,0.85,0.82,-11300,,
+Classificação,Random Forest,0.75,0.78,0.9,0.83,-11300,,
+Regressão,Linear Regression,,,,,12100,1201.63,2901801.76
+Regressão,Random Forest,,,,,13400,1129.02,2735992.09
+Regressão,Gradient Boosting,,,,,15800,1081.48,2641612.56
+Regressão,XGBoost,,,,,13000,1220.6,3054055.43

@@ -67,8 +67,9 @@ print("Matriz de confusão:\n", cm_log)
 sns.heatmap(cm_log, annot=True, fmt="d", cmap="Blues", xticklabels=["good", "bad"], yticklabels=["good", "bad"])
 plt.xlabel("Previsto")
 plt.ylabel("Real")
-plt.title("Matriz de Confusão - Classificação de Risco")
-plt.show()
+plt.title("Logistic Regression - Matriz de Confusão")
+plt.savefig("resultados/matriz_confusao_logReg.png", dpi=300, bbox_inches="tight")
+plt.close()
 
 # Relatório de métricas
 print("\n Relatório de classificação - Logistic Regression:")
@@ -96,7 +97,8 @@ sns.heatmap(cm_rf, annot=True, fmt="d", cmap="Greens", xticklabels=["good","bad"
 plt.xlabel("Previsto")
 plt.ylabel("Real")
 plt.title("Random Forest - Matriz de Confusão")
-plt.show()
+plt.savefig("resultados/matriz_confusao_rf.png", dpi=300, bbox_inches="tight")
+plt.close()
 
 # Relatório de métricas
 print("\n Relatório de classificação - Random Forest:")
@@ -110,7 +112,7 @@ df_resultados = pd.DataFrame({
 })
 
 # Exportar para CSV
-df_resultados.to_csv("data/resultados_classificacao.csv", index=False)
+df_resultados.to_csv("data/ResultadosClassificacao.csv", index=False)
 
 print("\n----------------")
 print("\nCalcular lucro")
@@ -212,44 +214,54 @@ print(" Lucro Random Forest Regressor:", calcular_lucro_reg(y_test_reg, y_pred_r
 print(" Lucro Gradient Boosting Regressor:", calcular_lucro_reg(y_test_reg, y_pred_gb_reg))
 print(" Lucro XGBoost:", calcular_lucro_reg(y_test_reg, y_pred_xgb))
 
-# -----------------------------------------------
-# Tunning de hiperparâmetros (Por Resolver)
-# -----------------------------------------------
+# --------------------------------------------------------------------
+# Importância de cada atributo para os modelos com melhores resultados
+# --------------------------------------------------------------------
 
-# Gradient Boosting Regressor
-param_grid_gb = {
-    "n_estimators": [100, 200, 300],
-    "learning_rate": [0.01, 0.05, 0.1],
-    "max_depth": [3, 5, 7],
-    "subsample": [0.8, 1.0]
-}
+print("\n-----------------------------------------------------------")
+print("Importância de cada atributo através do feature importances")
+print("-------------------------------------------------------------")
 
-gb_search = RandomizedSearchCV(
-    GradientBoostingRegressor(random_state=42),
-    param_distributions=param_grid_gb,
-    n_iter=10, cv=3, scoring="neg_mean_absolute_error", n_jobs=-1, random_state=42
-)
+# Para o Random Forest Classifier
+rf_model = rf_pipeline.named_steps['classifier']
+rf_preproc = rf_pipeline.named_steps['preprocessor']
 
-gb_search.fit(X_train_reg, y_train_reg)
-print("Melhores parâmetros GB:", gb_search.best_params_)
+# Obter nomes das features após o OneHotEncoding
+ohe = rf_preproc.named_transformers_['cat']
+encoded_cat_cols = ohe.get_feature_names_out(cat_cols)
+all_feature_names = list(num_cols) + list(encoded_cat_cols)
 
-# XGBoost
-param_grid_xgb = {
-    "n_estimators": [100, 200, 300],
-    "learning_rate": [0.01, 0.05, 0.1],
-    "max_depth": [3, 5, 7],
-    "subsample": [0.8, 1.0],
-    "colsample_bytree": [0.8, 1.0]
-}
+# Importância das features no Random Forest
+fi_rf = rf_model.feature_importances_
+fi_rf_df = pd.DataFrame({'feature': all_feature_names, 'importance': fi_rf})
+fi_rf_df = fi_rf_df.sort_values('importance', ascending=False).head(20)
 
-xgb_search = RandomizedSearchCV(
-    XGBRegressor(random_state=42, verbosity=0),
-    param_distributions=param_grid_xgb,
-    n_iter=10, cv=3, scoring="neg_mean_absolute_error", n_jobs=-1, random_state=42
-)
+plt.figure(figsize=(8,6))
+sns.barplot(x='importance', y='feature', data=fi_rf_df)
+plt.title('Feature Importances - RandomForestClassifier')
+plt.tight_layout()
+plt.savefig("resultados/feature_importances_rf.png", dpi=300, bbox_inches="tight")
+plt.close()
 
-xgb_search.fit(X_train_reg, y_train_reg)
-print("Melhores parâmetros XGB:", xgb_search.best_params_)
+# Para o Gradient Boosting Regressor
+gb_model = reg_gb_pipeline.named_steps['regressor']
+gb_preproc = reg_gb_pipeline.named_steps['preprocessor']
+
+ohe_reg = gb_preproc.named_transformers_['cat']
+encoded_cat_cols_reg = ohe_reg.get_feature_names_out(cat_cols)
+all_feature_names_reg = list(num_cols) + list(encoded_cat_cols_reg)
+
+fi_gb = gb_model.feature_importances_
+fi_gb_df = pd.DataFrame({'feature': all_feature_names_reg, 'importance': fi_gb})
+fi_gb_df = fi_gb_df.sort_values('importance', ascending=False).head(20)
+
+plt.figure(figsize=(8,6))
+sns.barplot(x='importance', y='feature', data=fi_gb_df)
+plt.title('Feature Importances - GradientBoostingRegressor')
+plt.tight_layout()
+plt.savefig("resultados/feature_importances_gb.png", dpi=300, bbox_inches="tight")
+plt.close()
+
 
 
 
