@@ -14,6 +14,14 @@ from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from xgboost import XGBRegressor
 
+
+# Tentar Fazer isto :
+# Usar o IDF para a parte das variaveis categóricas
+# Aplicar o Tunning
+# AUTOGLOW
+# H20 
+
+
 # Carregar o dataset
 df = pd.read_csv("data/DatasetCredit-g.csv")
 
@@ -33,7 +41,7 @@ print("Categóricas:", cat_cols)
 preprocessor = ColumnTransformer(
     transformers=[
         ('num', StandardScaler(), num_cols),      # Escalar numéricas
-        ('cat', OneHotEncoder(handle_unknown='ignore'), cat_cols)  # Codificar categóricas
+        ('cat', OneHotEncoder(handle_unknown='ignore'), cat_cols)  # Codificar categóricas # IDF - 
     ]
 )
 
@@ -146,7 +154,7 @@ y_pred_lin = reg_lin_pipeline.predict(X_test_reg)
 
 print("\nMétricas Regressão Linear:")
 print("MAE:", mean_absolute_error(y_test_reg, y_pred_lin))
-print("RMSE:", mean_squared_error(y_test_reg, y_pred_lin))
+print("RMSE:", mean_squared_error(y_test_reg, y_pred_lin)) # Raiz do ERRO - fazer
 
 # -----------------------------------------------
 # Random Forest Regressor
